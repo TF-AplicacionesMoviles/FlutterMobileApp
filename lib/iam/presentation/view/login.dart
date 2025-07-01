@@ -6,7 +6,11 @@ class LoginPage extends StatelessWidget {
   final VoidCallback onLogin;
   final VoidCallback toRegister;
 
-  const LoginPage({required this.viewModel, required this.onLogin, required this.toRegister});
+  const LoginPage({
+    required this.viewModel,
+    required this.onLogin,
+    required this.toRegister,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +18,10 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
             TextField(
-              onChanged: (value) => viewModel.username = value,  // Acceder correctamente a la propiedad
+              onChanged: (value) => viewModel.username = value,
               decoration: InputDecoration(labelText: 'Username'),
             ),
             TextField(
@@ -26,19 +30,22 @@ class LoginPage extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Password'),
             ),
             if (viewModel.errorMessage != null)
-              Text(viewModel.errorMessage!, style: TextStyle(color: Colors.red)),
+              Text(
+                viewModel.errorMessage!,
+                style: TextStyle(color: Colors.red),
+              ),
             ElevatedButton(
-              onPressed: () {
-                viewModel.login();
+              onPressed: () async {
+                await viewModel.login();
                 if (viewModel.isAuthenticated) {
                   onLogin();
                 }
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             TextButton(
               onPressed: toRegister,
-              child: Text("Don't have an account? Register"),
+              child: const Text("Don't have an account? Register"),
             ),
           ],
         ),
