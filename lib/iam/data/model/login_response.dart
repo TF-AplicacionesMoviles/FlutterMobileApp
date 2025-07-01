@@ -1,7 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-import '../../domain/model/login.dart';
-
-part 'login_response.g.dart'; // Para generar el código de serialización
 
 class LoginResponse {
   final String accessToken;

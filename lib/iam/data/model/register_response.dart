@@ -1,7 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-import '../../domain/model/login.dart';
 
-part 'register_response.g.dart';
 
 class RegisterResponse {
   final String accessToken;
