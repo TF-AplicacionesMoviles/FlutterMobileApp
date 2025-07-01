@@ -10,14 +10,7 @@ class DrawerWrapper extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dentify App"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();  // Abre el Drawer
-            },
-            icon: const Icon(Icons.menu),
-          ),
-        ],
+      
       ),
       drawer: Drawer(
         child: DrawerContent(
