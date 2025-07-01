@@ -6,7 +6,7 @@ class LoginPage extends StatelessWidget {
   final VoidCallback onLogin;
   final VoidCallback toRegister;
 
-  const LoginPage({
+  const LoginPage({super.key, 
     required this.viewModel,
     required this.onLogin,
     required this.toRegister,
