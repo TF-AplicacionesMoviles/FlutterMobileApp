@@ -3,20 +3,21 @@ import '../../presentation/view/invoice_view.dart';
 import '../../presentation/view/add_invoice_form_view.dart';
 import '../../presentation/di/presentation_module.dart';
 
-void invoiceNavGraph(BuildContext context) {
+Widget invoiceNavGraph() {
   final invoicesViewModel = PresentationModule.getInvoicesViewModel();
   final invoiceFormViewModel = PresentationModule.getInvoiceFormViewModel();
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  Navigator(
+  return Navigator(
     key: navigatorKey,
+    initialRoute: '/payments',
     onGenerateRoute: (RouteSettings settings) {
       switch (settings.name) {
         case '/payments':
           return MaterialPageRoute(
             builder: (context) => InvoiceView(
-              invoicesViewModel: invoicesViewModel,
+              viewModel: invoicesViewModel,
               toAddInvoiceForm: () {
                 navigatorKey.currentState?.pushNamed('/add_invoice_form');
               },
@@ -25,8 +26,11 @@ void invoiceNavGraph(BuildContext context) {
         case '/add_invoice_form':
           return MaterialPageRoute(
             builder: (context) => AddInvoiceFormView(
-              invoiceFormViewModel: invoiceFormViewModel,
+              viewModel: invoiceFormViewModel,
               toInvoices: () {
+                navigatorKey.currentState?.pop();
+              },
+              toBack: () {
                 navigatorKey.currentState?.pop();
               },
               onInvoicesSaved: () {
@@ -36,7 +40,12 @@ void invoiceNavGraph(BuildContext context) {
           );
         default:
           return MaterialPageRoute(
-            builder: (context) => InvoiceView(invoicesViewModel: invoicesViewModel),
+            builder: (context) => InvoiceView(
+              viewModel: invoicesViewModel,
+              toAddInvoiceForm: () {
+                navigatorKey.currentState?.pushNamed('/add_invoice_form');
+              },
+            ),
           );
       }
     },

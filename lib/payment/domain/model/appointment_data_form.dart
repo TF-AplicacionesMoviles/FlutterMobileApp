@@ -1,3 +1,5 @@
+import 'package:dentify_flutter/patientAttention/appointments/domain/model/appointment.dart';
+
 class AppointmentDataForm {
   final int id;
   final String patientName;
@@ -30,4 +32,14 @@ class AppointmentDataForm {
       completed: json['completed'],
     );
   }
+
+  factory AppointmentDataForm.fromAppointment(Appointment appointment) {
+    return AppointmentDataForm(
+      id: appointment.id,
+      patientName: appointment.patientName,
+      reason: appointment.reason,
+      completed: appointment.completed,
+    );
+  }
+
 }

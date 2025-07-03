@@ -68,7 +68,8 @@ class AddInvoiceFormView extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         AppointmentDropdown(
-                          appointments: viewModel.getAppointments().value,
+                          label: 'Select Appointment',
+                          appointments: viewModel.appointments,
                           selectedAppointmentId: appointmentId.value,
                           onAppointmentSelected: (id) {
                             appointmentId.value = id;

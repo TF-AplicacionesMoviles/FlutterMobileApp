@@ -1,5 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
 import '../../domain/model/invoice.dart';
 
+part 'invoice_response.g.dart';
+
+@JsonSerializable()
 class InvoiceResponse {
   final int id;
   final int appointmentId;
@@ -19,7 +23,11 @@ class InvoiceResponse {
     required this.createdAt,
   });
 
-  // Convertir a dominio
+  factory InvoiceResponse.fromJson(Map<String, dynamic> json) =>
+      _$InvoiceResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InvoiceResponseToJson(this);
+
   Invoice toDomain() {
     return Invoice(
       id: id,

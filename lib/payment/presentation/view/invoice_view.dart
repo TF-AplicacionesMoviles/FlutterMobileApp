@@ -59,7 +59,7 @@ class InvoiceItemView extends StatelessWidget {
             Text('DNI: ${invoice.dni}'),
             Text('Email: ${invoice.email}'),
             Text('Amount: S/ ${invoice.amount}', style: TextStyle(color: Colors.green)),
-            Text('Created at: ${invoice.createdAt.take(10)}', style: TextStyle(fontSize: 12)),
+            Text('Created at: ${invoice.createdAt.substring(0, 10)}', style: TextStyle(fontSize: 12)),
           ],
         ),
       ),
