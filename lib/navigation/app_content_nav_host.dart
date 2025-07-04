@@ -22,6 +22,12 @@ class AppContentNavHost extends StatelessWidget {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+            ListTile(
+              title: Text("Payments"), // Añadimos esta ruta
+              onTap: () {
+                Navigator.pushNamed(context, '/payments'); // Ruta de Payments
+              },
+            ),
             // Agrega más elementos según lo necesites
           ],
         ),

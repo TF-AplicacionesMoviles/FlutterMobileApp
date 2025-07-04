@@ -9,9 +9,9 @@ part 'invoice_service.g.dart';
 abstract class InvoiceService {
   factory InvoiceService(Dio dio, {String baseUrl}) = _InvoiceService;
 
-  @GET("/invoices")
+  @GET("v1/invoices")
   Future<List<InvoiceResponse>> getAllInvoices();
 
-  @POST("/invoices")
+  @POST("v1/invoices")
   Future<void> addInvoice(@Body() AddInvoiceRequest invoice);
 }
