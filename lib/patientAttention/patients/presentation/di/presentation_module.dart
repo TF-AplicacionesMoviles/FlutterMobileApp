@@ -1,9 +1,12 @@
 import 'package:dentify_flutter/patientAttention/patients/data/di/dependency_injection.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/model/medical_history.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_medical_histories_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_patients_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/update_patient_use_case.dart';
+import 'package:dentify_flutter/patientAttention/patients/presentation/viewmodel/medical_history_view_model.dart';
 import 'package:dentify_flutter/patientAttention/patients/presentation/viewmodel/patient_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,6 +36,10 @@ final patientsViewModelProvider = StateNotifierProvider<PatientViewModel, List<P
     );
 });
 
+
+
+
+
 final patientSearchQueryProvider = StateProvider<String>((ref) => '');
 
 final filteredPatientsProvider = Provider<List<Patient>>((ref) {
@@ -44,4 +51,22 @@ final filteredPatientsProvider = Provider<List<Patient>>((ref) {
            p.firstName.toLowerCase().contains(query) ||
            p.lastName.toLowerCase().contains(query);
   }).toList();
+});
+
+
+
+
+final getAllMedicalHistoriesUseCaseProvider = Provider<GetAllMedicalHistoriesUseCase>((ref) {
+  return GetAllMedicalHistoriesUseCase(ref.read(medicalHistoryRepositoryProvider));
+});
+
+final medicalHistoriesViewModelProvider = StateNotifierProvider.family<
+  MedicalHistoryViewModel,
+  List<MedicalHistory>,
+  int 
+>((ref, id) {
+  return MedicalHistoryViewModel(
+    ref.read(getAllMedicalHistoriesUseCaseProvider),
+    id,
+  );
 });

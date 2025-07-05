@@ -14,7 +14,9 @@ class PatientsView extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5FFFD),
-      appBar: AppBar(title: const Text("Patients",
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5FFFD),
+        title: const Text("Patients",
       style: TextStyle(fontWeight: FontWeight.bold),)),
       body: Column(
         children: [

@@ -1,6 +1,7 @@
 import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/update_patient_request.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
 import 'package:dentify_flutter/patientAttention/patients/presentation/di/presentation_module.dart';
+import 'package:dentify_flutter/patientAttention/patients/presentation/view/medical_histories_view.dart';
 import 'package:dentify_flutter/patientAttention/patients/presentation/widgets/patient_form.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,11 @@ class PatientCard extends ConsumerWidget {
                     ),
                     onPressed: () {
                       // TODO: acción de ver historial
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MedicalHistoriesView(patient: patient),
+                        ));
                     },
                     child: const Text('View History'),
                   ),
