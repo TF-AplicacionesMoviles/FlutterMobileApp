@@ -11,6 +11,7 @@ class MedicalHistoryCard extends ConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref) {
     final date = DateTime.parse(medicalHistory.createdAt);
     final formatted = DateFormat("MMMM d, y", 'en_US').format(date);
+    final formattedHour = DateFormat.Hm().format(date); 
 
     return Card(
       color: Colors.white,
@@ -44,14 +45,14 @@ class MedicalHistoryCard extends ConsumerWidget{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${formatted}',
+                          formatted,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                         Text(
-                          'Created At: ${medicalHistory.createdAt}',
+                          'Created At: $formattedHour',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
