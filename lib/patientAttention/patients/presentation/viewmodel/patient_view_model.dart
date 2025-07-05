@@ -34,7 +34,6 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
   }
 
   Future<void> addPatient(AddPatientRequest newPatient) async {
-    // Llamar usecase correspondiente
     try {
       await addPatientUseCase(newPatient);
       await getAllPatients(); // recargar

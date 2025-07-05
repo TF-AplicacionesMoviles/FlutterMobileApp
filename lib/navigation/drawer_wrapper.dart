@@ -8,7 +8,9 @@ class DrawerWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FFFD),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text("Dentify App"),
       
       ),
@@ -36,9 +38,10 @@ class DrawerContent extends StatelessWidget {
       children: [
         const DrawerHeader(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(Icons.account_circle, size: 40),
+              SizedBox(width: 16),
               Text('Dentify App', style: TextStyle(fontSize: 24)),
             ],
           ),

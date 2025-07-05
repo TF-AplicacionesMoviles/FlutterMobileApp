@@ -103,7 +103,7 @@ class PatientCard extends ConsumerWidget {
                           builder: (_) => MedicalHistoriesView(patient: patient),
                         ));
                     },
-                    child: const Text('View History'),
+                    child: const Text('View Medical Histories'),
                   ),
                 ),
               ],

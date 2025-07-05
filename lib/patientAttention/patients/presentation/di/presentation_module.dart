@@ -1,6 +1,7 @@
 import 'package:dentify_flutter/patientAttention/patients/data/di/dependency_injection.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/medical_history.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_medical_history_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_medical_histories_use_case.dart';
@@ -60,6 +61,10 @@ final getAllMedicalHistoriesUseCaseProvider = Provider<GetAllMedicalHistoriesUse
   return GetAllMedicalHistoriesUseCase(ref.read(medicalHistoryRepositoryProvider));
 });
 
+final addMedicalHistoryUseCaseProvider = Provider<AddMedicalHistoryUseCase>((ref) {
+  return AddMedicalHistoryUseCase(ref.read(medicalHistoryRepositoryProvider));
+});
+
 final medicalHistoriesViewModelProvider = StateNotifierProvider.family<
   MedicalHistoryViewModel,
   List<MedicalHistory>,
@@ -67,6 +72,7 @@ final medicalHistoriesViewModelProvider = StateNotifierProvider.family<
 >((ref, id) {
   return MedicalHistoryViewModel(
     ref.read(getAllMedicalHistoriesUseCaseProvider),
+    ref.read(addMedicalHistoryUseCaseProvider),
     id,
   );
 });

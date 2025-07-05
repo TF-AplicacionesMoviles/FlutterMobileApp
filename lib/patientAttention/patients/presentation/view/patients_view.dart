@@ -16,6 +16,7 @@ class PatientsView extends ConsumerWidget {
       backgroundColor: const Color(0xFFF5FFFD),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5FFFD),
+        automaticallyImplyLeading: false,
         title: const Text("Patients",
       style: TextStyle(fontWeight: FontWeight.bold),)),
       body: Column(
@@ -46,7 +47,7 @@ class PatientsView extends ConsumerWidget {
           Expanded(
             child: patients.isEmpty ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
                 itemCount: patients.length,
                 itemBuilder:(context, index) {
                   final patient = patients[index];

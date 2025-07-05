@@ -1,6 +1,7 @@
 import 'package:dentify_flutter/patientAttention/patients/domain/model/medical_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 class MedicalHistoryCard extends ConsumerWidget{
   const MedicalHistoryCard({super.key, required this.medicalHistory});
@@ -8,6 +9,9 @@ class MedicalHistoryCard extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final date = DateTime.parse(medicalHistory.createdAt);
+    final formatted = DateFormat("MMMM d, y", 'en_US').format(date);
+
     return Card(
       color: Colors.white,
       elevation: 4,
@@ -40,7 +44,7 @@ class MedicalHistoryCard extends ConsumerWidget{
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Medical History ${medicalHistory.id}',
+                          '${formatted}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,

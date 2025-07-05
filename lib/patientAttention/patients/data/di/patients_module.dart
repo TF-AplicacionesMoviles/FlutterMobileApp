@@ -6,6 +6,7 @@ import 'package:dentify_flutter/patientAttention/patients/data/repository/medica
 import 'package:dentify_flutter/patientAttention/patients/data/repository/patient_repository_impl.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/repository/medical_history_repository.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/repository/patient_repository.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_medical_history_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_medical_histories_use_case.dart';
@@ -68,12 +69,17 @@ class PatientsModule {
     return GetAllMedicalHistoriesUseCase(provideMedicalHistoryRepository());
   }
 
+  static AddMedicalHistoryUseCase provideAddMedicalHistoryUseCase() {
+    return AddMedicalHistoryUseCase(provideMedicalHistoryRepository());
+  }
+
   static Widget provideMedicalHistoryModule() {
     return MultiProvider(
       providers: [
         Provider<MedicalHistoryService>(create: (_) => provideMedicalHistoryService()),
         Provider<MedicalHistoryRepository>(create: (_) => provideMedicalHistoryRepository()),
         Provider<GetAllMedicalHistoriesUseCase>(create: (_) => provideGetAllMedicalHistoriesUseCase()),
+        Provider<AddMedicalHistoryUseCase>(create: (_) => provideAddMedicalHistoryUseCase())
       ],
       child: const DentifyApp(),
     );
