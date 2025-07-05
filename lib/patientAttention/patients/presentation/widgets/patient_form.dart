@@ -1,28 +1,54 @@
 import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/add_patient_request.dart';
+import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/update_patient_request.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddPatientForm extends ConsumerStatefulWidget {
-  const AddPatientForm({super.key});
+class PatientForm extends ConsumerStatefulWidget {
+  const PatientForm({super.key, this.patient});
+  final Patient? patient;
 
   @override
-  ConsumerState<AddPatientForm> createState() => _AddPatientFormState();
+  ConsumerState<PatientForm> createState() => _PatientFormState();
 }
 
-class _AddPatientFormState extends ConsumerState<AddPatientForm> {
+class _PatientFormState extends ConsumerState<PatientForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String dni = "";
-  String firstName = "";
-  String lastName = "";
-  String email = "";
-  String homeAddress = "";
+  final dni = TextEditingController();
+  final firstName = TextEditingController();
+  final lastName = TextEditingController();
+  final email = TextEditingController();
+  final homeAddress = TextEditingController();
   DateTime? selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.patient != null) {
+      dni.text = widget.patient!.dni;
+      firstName.text = widget.patient!.firstName;
+      lastName.text = widget.patient!.lastName;
+      email.text = widget.patient!.email;
+      homeAddress.text = widget.patient!.homeAddress;
+      selectedDate = DateTime.tryParse(widget.patient!.birthday);
+    }
+  }
+
+  @override
+  void dispose() {
+    dni.dispose();
+    firstName.dispose();
+    lastName.dispose();
+    email.dispose();
+    homeAddress.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("New Patient"),
+      title: Text(widget.patient == null ? "New Patient" : "Edit Patient"),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -30,28 +56,28 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
+                controller: dni,
                 decoration: const InputDecoration(labelText: "DNI"),
-                onChanged: (value) => dni = value,
                 validator: (v) => v == null || v.isEmpty ? "required" : null,
               ),
               TextFormField(
+                controller: firstName,
                 decoration: const InputDecoration(labelText: "First name"),
-                onChanged: (value) => firstName = value,
                 validator: (v) => v == null || v.isEmpty ? "required" : null,
               ),
               TextFormField(
+                controller: lastName,
                 decoration: const InputDecoration(labelText: "Last name"),
-                onChanged: (value) => lastName = value,
                 validator: (v) => v == null || v.isEmpty ? "required" : null,
               ),
               TextFormField(
+                controller: email,
                 decoration: const InputDecoration(labelText: "Email"),
-                onChanged: (value) => email = value,
                 validator: (v) => v == null || v.isEmpty ? "required" : null,
               ),
               TextFormField(
+                controller: homeAddress,
                 decoration: const InputDecoration(labelText: "Home Address"),
-                onChanged: (value) => homeAddress = value,
                 validator: (v) => v == null || v.isEmpty ? "required" : null,
               ),
               const SizedBox(height: 12),
@@ -98,20 +124,35 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                  "${selectedDate!.month.toString().padLeft(2, '0')}-"
                  "${selectedDate!.day.toString().padLeft(2, '0')}";
 
-              final request = AddPatientRequest(
-                dni: int.parse(dni),
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                homeAddress: homeAddress,
-                birthday: birthday,
-              );
-
-              print(birthday);
-              Navigator.pop(context, request);
+              if (widget.patient == null) {
+                // CREACIÓN
+                final request = AddPatientRequest(
+                  dni: int.parse(dni.text),
+                  firstName: firstName.text,
+                  lastName: lastName.text,
+                  email: email.text,
+                  homeAddress: homeAddress.text,
+                  birthday: birthday,
+                );
+                Navigator.pop(context, request);
+              } else {
+                // EDICIÓN
+                final update = UpdatePatientRequest(
+                  dni: int.parse(dni.text),
+                  firstName: firstName.text,
+                  lastName: lastName.text,
+                  email: email.text,
+                  homeAddress: homeAddress.text,
+                  birthday: birthday,
+                );
+                Navigator.pop(context, {
+                  'id': widget.patient!.id,
+                  'update': update,
+                });
+              }
             }
           },
-          child: const Text("Add"),
+          child: Text(widget.patient == null ? "Add" : "Update"),
         ),
       ],
     );

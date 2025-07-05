@@ -10,9 +10,10 @@ class PatientsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final patients = ref.watch(patientsViewModelProvider);
+    final patients = ref.watch(filteredPatientsProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FFFD),
       appBar: AppBar(title: const Text("Patients",
       style: TextStyle(fontWeight: FontWeight.bold),)),
       body: Column(
@@ -21,14 +22,16 @@ class PatientsView extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               onChanged: (value) {
-                
+                ref.read(patientSearchQueryProvider.notifier).state = value;
               },
             cursorColor: const Color(0xFF2C3E50),
             decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
             prefixIcon: Icon(Icons.search),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                width: 2,
+                width: 1,
                 color: const Color(0xFF2C3E50),
                 ),
               borderRadius: BorderRadius.circular(24),
@@ -58,7 +61,7 @@ class PatientsView extends ConsumerWidget {
             onPressed: () async {
               final newPatient = await showDialog<AddPatientRequest>(
                 context: context,
-                builder: (context) => const AddPatientForm(),
+                builder: (context) => const PatientForm(),
               );
               if (newPatient != null) {
                 await ref

@@ -1,20 +1,24 @@
 import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/add_patient_request.dart';
+import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/update_patient_request.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_patients_use_case.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/usecases/update_patient_use_case.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PatientViewModel extends StateNotifier<List<Patient>> {
   final GetAllPatientsUseCase getAllPatientsUseCase;
   final AddPatientUseCase addPatientUseCase;
   final DeletePatientUseCase deletePatientUseCase;
+  final UpdatePatientUseCase updatePatientUseCase;
   String? errorMessage;
 
   PatientViewModel(
     this.getAllPatientsUseCase, 
     this.addPatientUseCase,
-    this.deletePatientUseCase) : super([]) {
+    this.deletePatientUseCase,
+    this.updatePatientUseCase) : super([]) {
     getAllPatients();
   }
 
@@ -42,6 +46,15 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
   Future<void> deletePatient(int id) async {
     try {
       await deletePatientUseCase(id);
+      await getAllPatients();
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+  }
+
+  Future<void> updatePatient(int id, UpdatePatientRequest patient) async {
+    try {
+      await updatePatientUseCase(id, patient);
       await getAllPatients();
     } catch (e) {
       errorMessage = e.toString();

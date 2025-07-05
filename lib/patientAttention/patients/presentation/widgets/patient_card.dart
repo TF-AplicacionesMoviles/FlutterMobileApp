@@ -1,5 +1,7 @@
+import 'package:dentify_flutter/patientAttention/patients/data/remote/dto/update_patient_request.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.dart';
 import 'package:dentify_flutter/patientAttention/patients/presentation/di/presentation_module.dart';
+import 'package:dentify_flutter/patientAttention/patients/presentation/widgets/patient_form.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,7 @@ class PatientCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
+      color: Colors.white,
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -101,81 +104,137 @@ class PatientCard extends ConsumerWidget {
             ),
           ),
           Positioned(
-            top: 8,
-            right: 8,
+            top: 16,
+            right: 16,
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.black),
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    // TODO: acción de editar
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black),
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder:
-                                        (ctx) => AlertDialog(
-                                          title: const Text("Confirm Delete"),
-                                          content: const Text(
-                                            "Are you sure you want to delete this patient?",
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed:
-                                                  () =>
-                                                      Navigator.pop(ctx, false),
-                                              child: const Text("Cancel"),
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Fondo blanco
+                    shape: BoxShape.circle
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.edit_outlined, color: Colors.black),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                                  final result =
+                                      await showDialog<Map<String, dynamic>>(
+                                        context: context,
+                                        builder:
+                                            (context) => PatientForm(
+                                              patient: patient,
                                             ),
-                                            ElevatedButton(
-                                              onPressed:
-                                                  () =>
-                                                      Navigator.pop(ctx, true),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: const Color(0xFF2C3E50),
-                                                foregroundColor: Colors.white
-                                              ),
-                                              child: const Text("Delete"),
-                                            ),
-                                          ],
-                                        ),
-                                  );
+                                      );
 
-                                  if (confirm == true) {
-                                    print('Delete pressed');
+                                  if (result != null) {
+                                    final id = result['id'] as int;
+                                    final update =
+                                        result['update']
+                                            as UpdatePatientRequest;
+
+                                    print('Edit pressed');
                                     print(
-                                      'Deleting patient with ID: ${patient.id}',
+                                      'Updating patient with ID: $id',
                                     );
+                                    print(
+                                      'With data: ${update.toJson()}',
+                                    );
+                                    
                                     await ref
                                         .read(
                                           patientsViewModelProvider
                                               .notifier,
                                         )
-                                        .deletePatient(patient.id);
-                                    await ref
-                                        .read(
-                                          patientsViewModelProvider
-                                              .notifier,
-                                        )
-                                        .getAllPatients();
+                                        .updatePatient(id, update);
 
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
                                         const SnackBar(
-                                          content: Text("Appointment deleted"),
+                                          content: Text("Patient updated"),
                                         ),
                                       );
                                     }
                                   }
-                                },
+                    },
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Fondo blanco
+                    shape: BoxShape.circle
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.delete_outline , color: Colors.black),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder:
+                                          (ctx) => AlertDialog(
+                                            title: const Text("Confirm Delete"),
+                                            content: const Text(
+                                              "Are you sure you want to delete this patient?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed:
+                                                    () =>
+                                                        Navigator.pop(ctx, false),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed:
+                                                    () =>
+                                                        Navigator.pop(ctx, true),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: const Color(0xFF2C3E50),
+                                                  foregroundColor: Colors.white
+                                                ),
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          ),
+                                    );
+                  
+                                    if (confirm == true) {
+                                      print('Delete pressed');
+                                      print(
+                                        'Deleting patient with ID: ${patient.id}',
+                                      );
+                                      await ref
+                                          .read(
+                                            patientsViewModelProvider
+                                                .notifier,
+                                          )
+                                          .deletePatient(patient.id);
+                                      await ref
+                                          .read(
+                                            patientsViewModelProvider
+                                                .notifier,
+                                          )
+                                          .getAllPatients();
+                  
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text("Appointment deleted"),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                  ),
                 ),
               ],
             ),

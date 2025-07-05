@@ -3,6 +3,7 @@ import 'package:dentify_flutter/patientAttention/patients/domain/model/patient.d
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_patients_use_case.dart';
+import 'package:dentify_flutter/patientAttention/patients/domain/usecases/update_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/presentation/viewmodel/patient_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,10 +20,28 @@ final deletePatientUseCaseProvider = Provider<DeletePatientUseCase>((ref) {
   return DeletePatientUseCase(ref.read(patientRepositoryProvider));
 });
 
+final updatePatientUseCaseProvider = Provider<UpdatePatientUseCase>((ref) {
+  return UpdatePatientUseCase(ref.read(patientRepositoryProvider));
+});
+
 final patientsViewModelProvider = StateNotifierProvider<PatientViewModel, List<Patient>>((ref) {
   return PatientViewModel(
     ref.read(getAllPatientsUseCaseProvider), 
     ref.read(addPatientUseCaseProvider),
-    ref.read(deletePatientUseCaseProvider)
+    ref.read(deletePatientUseCaseProvider),
+    ref.read(updatePatientUseCaseProvider)
     );
+});
+
+final patientSearchQueryProvider = StateProvider<String>((ref) => '');
+
+final filteredPatientsProvider = Provider<List<Patient>>((ref) {
+  final patients = ref.watch(patientsViewModelProvider);
+  final query = ref.watch(patientSearchQueryProvider).toLowerCase();
+
+  return patients.where((p) {
+    return p.dni.contains(query) ||
+           p.firstName.toLowerCase().contains(query) ||
+           p.lastName.toLowerCase().contains(query);
+  }).toList();
 });
