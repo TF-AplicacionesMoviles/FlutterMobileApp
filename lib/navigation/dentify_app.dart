@@ -42,7 +42,7 @@ class DentifyApp extends ConsumerWidget {
                 Navigator.pushNamed(context, '/login');
               },
             ),
-        '/home': (context) => DrawerWrapper(content: PatientsView()),
+        '/home': (context) => DrawerWrapper(content: HomeScreen()),
         '/appointments': (context) => DrawerWrapper(content: AppointmentsView()),
         '/profile': (context) => DrawerWrapper(content: ProfileScreen()),
         '/patients': (context) => DrawerWrapper(content: PatientsView())
