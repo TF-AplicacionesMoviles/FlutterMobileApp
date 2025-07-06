@@ -5,6 +5,7 @@ import 'package:dentify_flutter/patientAttention/patients/domain/usecases/add_pa
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/delete_patient_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/get_all_patients_use_case.dart';
 import 'package:dentify_flutter/patientAttention/patients/domain/usecases/update_patient_use_case.dart';
+import 'package:dentify_flutter/patientAttention/patients/presentation/di/presentation_module.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PatientViewModel extends StateNotifier<List<Patient>> {
@@ -13,23 +14,29 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
   final DeletePatientUseCase deletePatientUseCase;
   final UpdatePatientUseCase updatePatientUseCase;
   String? errorMessage;
+  final Ref ref;
 
   PatientViewModel(
     this.getAllPatientsUseCase, 
     this.addPatientUseCase,
     this.deletePatientUseCase,
-    this.updatePatientUseCase) : super([]) {
+    this.updatePatientUseCase,
+    this.ref) : super([]) {
     getAllPatients();
   }
 
   Future<void> getAllPatients() async {
     try {
+      ref.read(isLoadingProvider.notifier).state = true;
       final patients = await getAllPatientsUseCase();
       state = patients;
     } catch (e) {
       errorMessage = e.toString();
       state = []; 
       print('Error fetching patients: $errorMessage');
+    }
+    finally {
+      ref.read(isLoadingProvider.notifier).state = false;
     }
   }
 

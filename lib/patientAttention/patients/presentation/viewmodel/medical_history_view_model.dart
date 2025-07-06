@@ -26,6 +26,7 @@ class MedicalHistoryViewModel extends StateNotifier<List<MedicalHistory>>{
     } catch (e) {
       errorMessage = e.toString();
       state = [];
+      print('Error fetching medical histories: $errorMessage');
     } finally {
       isLoading = false;
     }

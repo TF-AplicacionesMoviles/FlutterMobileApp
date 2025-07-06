@@ -11,6 +11,7 @@ class PatientsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final patients = ref.watch(filteredPatientsProvider);
+    final isLoading = ref.watch(isLoadingProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5FFFD),
@@ -45,7 +46,19 @@ class PatientsView extends ConsumerWidget {
             )
           ),
           Expanded(
-            child: patients.isEmpty ? const Center(child: CircularProgressIndicator())
+            // child: patients.isEmpty ? const Center(child: CircularProgressIndicator())
+            //   : ListView.builder(
+            //     padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
+            //     itemCount: patients.length,
+            //     itemBuilder:(context, index) {
+            //       final patient = patients[index];
+            //       return PatientCard(patient: patient);
+            //     },)
+
+            child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : patients.isEmpty
+                  ? const Center(child: Text('No patients found.'))
               : ListView.builder(
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
                 itemCount: patients.length,

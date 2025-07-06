@@ -33,7 +33,8 @@ final patientsViewModelProvider = StateNotifierProvider<PatientViewModel, List<P
     ref.read(getAllPatientsUseCaseProvider), 
     ref.read(addPatientUseCaseProvider),
     ref.read(deletePatientUseCaseProvider),
-    ref.read(updatePatientUseCaseProvider)
+    ref.read(updatePatientUseCaseProvider),
+    ref
     );
 });
 
@@ -76,3 +77,6 @@ final medicalHistoriesViewModelProvider = StateNotifierProvider.family<
     id,
   );
 });
+
+
+final isLoadingProvider = StateProvider<bool>((ref) => true);

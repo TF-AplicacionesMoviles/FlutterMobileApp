@@ -19,7 +19,7 @@ class MedicalHistoryCard extends ConsumerWidget{
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Stack(
         children: [
           Padding(
