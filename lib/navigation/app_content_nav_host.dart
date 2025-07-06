@@ -22,6 +22,12 @@ class AppContentNavHost extends StatelessWidget {
                 Navigator.pushNamed(context, '/profile');
               },
             ),
+            ListTile(
+              title:  Text("Inventory"),
+              onTap: () {
+                Navigator.pushNamed(context, '/inventory');
+              },
+            )
             // Agrega más elementos según lo necesites
           ],
         ),
