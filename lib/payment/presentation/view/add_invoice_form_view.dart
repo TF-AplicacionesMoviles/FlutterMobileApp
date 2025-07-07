@@ -45,13 +45,13 @@ class AddInvoiceFormView extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.description,
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                       ),
                       SizedBox(width: 8),
                       Text(
                         'Add a new Invoice',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: const Color.fromARGB(255, 0, 0, 0),
                           fontWeight: FontWeight.bold,
                         ),
                       )

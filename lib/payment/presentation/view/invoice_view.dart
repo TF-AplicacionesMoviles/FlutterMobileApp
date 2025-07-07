@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../domain/model/invoice.dart';
 import '../../presentation/viewmodel/invoice_view_model.dart';
 
-class InvoiceView extends StatelessWidget {
+class InvoiceView extends StatefulWidget {
   final InvoiceViewModel viewModel;
   final VoidCallback toAddInvoiceForm;
 
@@ -12,9 +12,30 @@ class InvoiceView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final invoices = viewModel.invoices;
+  _InvoiceViewState createState() => _InvoiceViewState();
+}
 
+class _InvoiceViewState extends State<InvoiceView> {
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.getAllInvoices();
+    widget.viewModel.addListener(_onViewModelChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.removeListener(_onViewModelChanged);
+    super.dispose();
+  }
+
+  void _onViewModelChanged() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final invoices = widget.viewModel.invoices;
     return Scaffold(
       appBar: AppBar(title: Text("Invoices")),
       body: Padding(
@@ -28,7 +49,7 @@ class InvoiceView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: toAddInvoiceForm,
+        onPressed: widget.toAddInvoiceForm,
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF2C3E50),
       ),
