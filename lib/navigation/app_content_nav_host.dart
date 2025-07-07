@@ -23,6 +23,12 @@ class AppContentNavHost extends StatelessWidget {
               },
             ),
             ListTile(
+              title: Text("Payments"), // Añadimos esta ruta
+              onTap: () {
+                Navigator.pushNamed(context, '/payments'); // Ruta de Payments
+              },
+            ),
+            ListTile(
               title:  Text("Inventory"),
               onTap: () {
                 Navigator.pushNamed(context, '/inventory');
