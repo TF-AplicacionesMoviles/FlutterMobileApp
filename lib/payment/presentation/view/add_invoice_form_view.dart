@@ -76,37 +76,37 @@ class AddInvoiceFormView extends StatelessWidget {
                           },
                         ),
                         SizedBox(height: 8),
-                        Text('Payment Method'),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                paymentMethodId.value = 1;
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  paymentMethodId.value == 1
-                                      ? Colors.teal
-                                      : Colors.grey,
+                        ValueListenableBuilder<int>(
+                          valueListenable: paymentMethodId,
+                          builder: (context, value, child) {
+                            return Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    paymentMethodId.value = 1;
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                      value == 1 ? Colors.teal : Colors.grey,
+                                    ),
+                                  ),
+                                  child: Text('Credit Card'),
                                 ),
-                              ),
-                              child: Text('Credit Card'),
-                            ),
-                            SizedBox(width: 4),
-                            ElevatedButton(
-                              onPressed: () {
-                                paymentMethodId.value = 2;
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  paymentMethodId.value == 2
-                                      ? Colors.teal
-                                      : Colors.grey,
+                                SizedBox(width: 4),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    paymentMethodId.value = 2;
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                      value == 2 ? Colors.teal : Colors.grey,
+                                    ),
+                                  ),
+                                  child: Text('Cash'),
                                 ),
-                              ),
-                              child: Text('Cash'),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -195,22 +195,27 @@ class AppointmentDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey),
-            ),
-            child: Text(
-              selectedAppointmentId != 0
-                  ? 'ID: $selectedAppointmentId'
-                  : 'Select an appointment',
-            ),
+        SizedBox(height: 8),
+        DropdownButtonFormField<int>(
+          value: selectedAppointmentId != 0 ? selectedAppointmentId : null,
+          items: appointments.map((appointment) {
+            return DropdownMenuItem<int>(
+              value: appointment.id,
+              child: Text(
+                '${appointment.patientName} - ${appointment.reason}',
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) onAppointmentSelected(value);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: appointments.isEmpty ? 'No pending appointments' : 'Select an appointment',
           ),
         ),
       ],
