@@ -4,6 +4,7 @@ import 'package:dentify_flutter/iam/presentation/view/login.dart';
 import 'package:dentify_flutter/iam/presentation/view/register.dart';
 import 'package:dentify_flutter/inventory/presentation/view/items_view.dart';
 import 'package:dentify_flutter/patientAttention/appointments/presentation/view/appointments_view.dart';
+import 'package:dentify_flutter/patientAttention/patients/presentation/view/patients_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'drawer_wrapper.dart'; // Importa DrawerWrapper
@@ -45,7 +46,8 @@ class DentifyApp extends ConsumerWidget {
         '/home': (context) => DrawerWrapper(content: ItemsView()),
         '/appointments': (context) => DrawerWrapper(content: AppointmentsView()),
         '/profile': (context) => DrawerWrapper(content: ProfileScreen()),
-        //'/inventory': (context) => DrawerWrapper(content: ItemsView()),
+        '/inventory': (context) => DrawerWrapper(content: ItemsView()),
+        '/patients': (context) => DrawerWrapper(content: PatientsView())
       },
       
     );
