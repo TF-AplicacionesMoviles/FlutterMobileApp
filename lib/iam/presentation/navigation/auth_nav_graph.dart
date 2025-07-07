@@ -13,9 +13,13 @@ Map<String, WidgetBuilder> authRoutes(WidgetRef ref) {
           viewModel: loginVM,
           onLogin: () {
             Navigator.pushReplacementNamed(context, '/home');
+            
           },
           toRegister: () {
-            Navigator.pushNamed(context, '/register');
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              "/register",
+              (route) => false,
+            );
           },
         ),
     '/register': (context) => RegisterPage(
@@ -24,7 +28,10 @@ Map<String, WidgetBuilder> authRoutes(WidgetRef ref) {
             Navigator.pushReplacementNamed(context, '/home');
           },
           toLogin: () {
-            Navigator.pushNamed(context, '/login');
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              "/login",
+              (route) => false,
+            );
           },
         ),
   };
