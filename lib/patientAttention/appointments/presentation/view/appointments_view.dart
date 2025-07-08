@@ -5,6 +5,31 @@ import 'package:dentify_flutter/patientAttention/appointments/presentation/widge
 import 'package:dentify_flutter/patientAttention/appointments/presentation/widgets/edit_appointment_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+
+String formatDateTime(String isoDateTime) {
+  try {
+    final dateTime = DateTime.parse(isoDateTime);
+    return DateFormat('dd/MM/yyyy hh:mm a').format(dateTime);
+  } catch (e) {
+    return isoDateTime; // fallback si algo falla
+  }
+}
+
+String totalMinutes(String duration) {
+  try {
+    final parts = duration.split(':');
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
+
+    final total = hours * 60 + minutes;
+    return '$total min';
+  } catch (e) {
+    return duration; // fallback si algo falla
+  }
+}
+
 
 class AppointmentsView extends ConsumerWidget {
   const AppointmentsView({super.key});
@@ -14,12 +39,15 @@ class AppointmentsView extends ConsumerWidget {
     final appointments = ref.watch(appointmentsViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Appointments")),
+      appBar: AppBar(
+        title: const Text("Appointments"),
+        automaticallyImplyLeading: false,
+      ),
       body:
           appointments.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 itemCount: appointments.length,
                 itemBuilder: (context, index) {
                   final appointment = appointments[index];
@@ -65,6 +93,13 @@ class AppointmentsView extends ConsumerWidget {
                                       color: Colors.grey,
                                     ),
                                   ),
+                                  Text(
+                                    'Appointment ID: ${appointment.id}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -77,7 +112,9 @@ class AppointmentsView extends ConsumerWidget {
                               children: [
                                 InfoRow(
                                   label: 'Date:',
-                                  value: appointment.appointmentDate,
+                                  value: formatDateTime(
+                                    appointment.appointmentDate,
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 InfoRow(
@@ -90,11 +127,11 @@ class AppointmentsView extends ConsumerWidget {
                                 ),
                                 InfoRow(
                                   label: 'Duration:',
-                                  value: appointment.duration,
+                                  value: totalMinutes(appointment.duration),
                                 ),
                                 InfoRow(
                                   label: 'Created:',
-                                  value: appointment.createdAt,
+                                  value: formatDateTime(appointment.createdAt),
                                 ),
                               ],
                             ),
@@ -121,13 +158,9 @@ class AppointmentsView extends ConsumerWidget {
                                             as UpdateAppointmentRequest;
 
                                     print('Edit pressed');
-                                    print(
-                                      'Updating appointment with ID: $id',
-                                    );
-                                    print(
-                                      'With data: ${update.toJson()}',
-                                    );
-                                    
+                                    print('Updating appointment with ID: $id');
+                                    print('With data: ${update.toJson()}');
+
                                     await ref
                                         .read(
                                           appointmentsViewModelProvider
@@ -230,10 +263,15 @@ class AppointmentsView extends ConsumerWidget {
                 .addAppointment(newAppointment);
           }
         },
-        backgroundColor: const Color(0xFF2C3E50),
+        backgroundColor: const Color.fromARGB(255, 117, 168, 219),
+        foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+        icon: const Icon(Icons.add),
+        //label: const Text('New Appointment (+)'),
+      
         label: const Text(
-          'New Appointment (+)',
+          'New Appointment',
           style: TextStyle(fontWeight: FontWeight.bold),
+          
         ),
       ),
     );
