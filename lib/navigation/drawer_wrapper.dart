@@ -54,6 +54,10 @@ class DrawerContent extends StatelessWidget {
           onTap: () => onItemSelected("/home"), // Ruta a Home
         ),
         ListTile(
+          title: const Text("Dashboard"),
+          onTap: () => onItemSelected("/dashboard"),
+        ),
+        ListTile(
           title: const Text("Appointments"),
           onTap: () => onItemSelected("/appointments"), // Ruta a Appointments
         ),
