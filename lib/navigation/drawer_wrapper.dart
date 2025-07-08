@@ -77,12 +77,13 @@ class DrawerContent extends StatelessWidget {
         ListTile(
           title: const Text("Logout"),
           onTap: () {
+            TokenStorage.clearTokens();
             // Aquí puedes agregar la lógica de logout
             Navigator.of(context).pushNamedAndRemoveUntil(
               "/login",
               (route) => false,
             ); // Ruta a Login
-            TokenStorage.clearTokens();
+          
           },
         ),
       ],
