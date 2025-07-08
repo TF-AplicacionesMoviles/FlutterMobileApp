@@ -165,7 +165,9 @@ class AddInvoiceFormView extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     showSuccessDialog.value = false;
-                    toInvoices();
+                    onInvoicesSaved();
+                    Navigator.pop(context); // Close the dialog
+                    
                   },
                   child: Text('OK'),
                 ),

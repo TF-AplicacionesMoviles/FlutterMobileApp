@@ -37,7 +37,7 @@ class _InvoiceViewState extends State<InvoiceView> {
   Widget build(BuildContext context) {
     final invoices = widget.viewModel.invoices;
     return Scaffold(
-      appBar: AppBar(title: Text("Invoices")),
+      appBar: AppBar(title: Text("Invoices"),automaticallyImplyLeading: false,),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(

@@ -86,7 +86,6 @@ class _InvoiceService implements InvoiceService {
     await _dio.fetch<void>(_options);
   }
 
-  @override
   Future<List<InvoiceResponse>> getInvoicesByAppointmentId(
       int appointmentId) async {
     final _extra = <String, dynamic>{};
