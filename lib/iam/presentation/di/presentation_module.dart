@@ -1,3 +1,6 @@
+import 'package:dentify_flutter/iam/data/di/profile_providers.dart';
+import 'package:dentify_flutter/iam/presentation/viewmodel/profile_state.dart';
+import 'package:dentify_flutter/iam/presentation/viewmodel/profile_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/register_use_case.dart';
@@ -23,3 +26,10 @@ final registerViewModelProvider = Provider<RegisterViewModel>((ref) {
   return RegisterViewModel(ref.read(registerUseCaseProvider));
 });
 
+final profileViewModelProvider = StateNotifierProvider<ProfileViewModel, ProfileState>((ref) {
+  return ProfileViewModel(
+    getUserInfoUseCase: ref.read(getUserInfoUseCaseProvider),
+    updatePasswordUseCase: ref.read(updatePasswordUseCaseProvider),
+    updateInformationUseCase: ref.read(updateInfoUseCaseProvider),
+  );
+});

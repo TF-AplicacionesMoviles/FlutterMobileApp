@@ -1,3 +1,4 @@
+import 'package:dentify_flutter/dashboard/presentation/view/dashboard_screen.dart';
 import 'package:dentify_flutter/iam/presentation/di/presentation_module.dart';
 import 'package:dentify_flutter/iam/presentation/view/login.dart';
 import 'package:dentify_flutter/iam/presentation/view/register.dart';
@@ -51,13 +52,13 @@ class DentifyApp extends ConsumerWidget {
                 ).pushNamedAndRemoveUntil("/login", (route) => false);
               },
             ),
-        '/home': (context) => DrawerWrapper(content: HomeScreen()),
         '/appointments':
             (context) => DrawerWrapper(content: AppointmentsView()),
         '/profile': (context) => DrawerWrapper(content: ProfileScreen()),
+        '/patients': (context) => DrawerWrapper(content: PatientsView()),
+        '/home': (context) => const DrawerWrapper(content: DashboardScreen()),
         ...paymentRoutes(ref),
         '/inventory': (context) => DrawerWrapper(content: ItemsView()),
-        '/patients': (context) => DrawerWrapper(content: PatientsView()),
       },
     );
   }

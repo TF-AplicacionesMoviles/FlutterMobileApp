@@ -15,9 +15,7 @@ class PatientCard extends ConsumerWidget {
     return Card(
       color: Colors.white,
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Stack(
         children: [
@@ -34,10 +32,7 @@ class PatientCard extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.all(8),
-                      child: const Icon(
-                        Icons.people,
-                        color: Color(0xFF2C3E50),
-                      ),
+                      child: const Icon(Icons.people, color: Color(0xFF2C3E50)),
                     ),
                     const SizedBox(width: 8),
                     Column(
@@ -67,14 +62,8 @@ class PatientCard extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      InfoRow(
-                        label: 'Email:',
-                        value: patient.email,
-                      ),
-                      InfoRow(
-                        label: 'Birthday:',
-                        value: patient.birthday,
-                      ),
+                      InfoRow(label: 'Email:', value: patient.email),
+                      InfoRow(label: 'Birthday:', value: patient.birthday),
                       InfoRow(
                         label: 'Home Address:',
                         value: patient.homeAddress,
@@ -92,7 +81,10 @@ class PatientCard extends ConsumerWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       textStyle: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
@@ -100,8 +92,10 @@ class PatientCard extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => MedicalHistoriesView(patient: patient),
-                        ));
+                          builder:
+                              (_) => MedicalHistoriesView(patient: patient),
+                        ),
+                      );
                     },
                     child: const Text('View Medical Histories'),
                   ),
@@ -119,53 +113,36 @@ class PatientCard extends ConsumerWidget {
                   height: 32,
                   decoration: BoxDecoration(
                     color: Colors.white, // Fondo blanco
-                    shape: BoxShape.circle
+                    shape: BoxShape.circle,
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Colors.black),
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     onPressed: () async {
-                                  final result =
-                                      await showDialog<Map<String, dynamic>>(
-                                        context: context,
-                                        builder:
-                                            (context) => PatientForm(
-                                              patient: patient,
-                                            ),
-                                      );
+                      final result = await showDialog<Map<String, dynamic>>(
+                        context: context,
+                        builder: (context) => PatientForm(patient: patient),
+                      );
 
-                                  if (result != null) {
-                                    final id = result['id'] as int;
-                                    final update =
-                                        result['update']
-                                            as UpdatePatientRequest;
+                      if (result != null) {
+                        final id = result['id'] as int;
+                        final update = result['update'] as UpdatePatientRequest;
 
-                                    print('Edit pressed');
-                                    print(
-                                      'Updating patient with ID: $id',
-                                    );
-                                    print(
-                                      'With data: ${update.toJson()}',
-                                    );
-                                    
-                                    await ref
-                                        .read(
-                                          patientsViewModelProvider
-                                              .notifier,
-                                        )
-                                        .updatePatient(id, update);
+                        print('Edit pressed');
+                        print('Updating patient with ID: $id');
+                        print('With data: ${update.toJson()}');
 
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Patient updated"),
-                                        ),
-                                      );
-                                    }
-                                  }
+                        await ref
+                            .read(patientsViewModelProvider.notifier)
+                            .updatePatient(id, update);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Patient updated")),
+                          );
+                        }
+                      }
                     },
                   ),
                 ),
@@ -174,72 +151,60 @@ class PatientCard extends ConsumerWidget {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: Colors.white, // Fondo blanco
-                    shape: BoxShape.circle
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.delete_outline , color: Colors.black),
+                    icon: const Icon(Icons.delete_outline, color: Colors.black),
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     onPressed: () async {
-                                    final confirm = await showDialog<bool>(
-                                      context: context,
-                                      builder:
-                                          (ctx) => AlertDialog(
-                                            title: const Text("Confirm Delete"),
-                                            content: const Text(
-                                              "Are you sure you want to delete this patient?",
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed:
-                                                    () =>
-                                                        Navigator.pop(ctx, false),
-                                                child: const Text("Cancel"),
-                                              ),
-                                              ElevatedButton(
-                                                onPressed:
-                                                    () =>
-                                                        Navigator.pop(ctx, true),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: const Color(0xFF2C3E50),
-                                                  foregroundColor: Colors.white
-                                                ),
-                                                child: const Text("Delete"),
-                                              ),
-                                            ],
-                                          ),
-                                    );
-                  
-                                    if (confirm == true) {
-                                      print('Delete pressed');
-                                      print(
-                                        'Deleting patient with ID: ${patient.id}',
-                                      );
-                                      await ref
-                                          .read(
-                                            patientsViewModelProvider
-                                                .notifier,
-                                          )
-                                          .deletePatient(patient.id);
-                                      await ref
-                                          .read(
-                                            patientsViewModelProvider
-                                                .notifier,
-                                          )
-                                          .getAllPatients();
-                  
-                                      if (context.mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text("Appointment deleted"),
-                                          ),
-                                        );
-                                      }
-                                    }
-                                  },
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (ctx) => AlertDialog(
+                              title: const Text("Confirm Delete"),
+                              content: const Text(
+                                "Are you sure you want to delete this patient?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx, false),
+                                  child: const Text("Cancel"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => Navigator.pop(ctx, true),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2C3E50),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text("Delete"),
+                                ),
+                              ],
+                            ),
+                      );
+
+                      if (confirm == true) {
+                        print('Delete pressed');
+                        print('Deleting patient with ID: ${patient.id}');
+
+                        final success = await ref
+                            .read(patientsViewModelProvider.notifier)
+                            .deletePatientAndRefresh(patient.id);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? "Patient deleted"
+                                    : "Error deleting patient",
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
                   ),
                 ),
               ],
