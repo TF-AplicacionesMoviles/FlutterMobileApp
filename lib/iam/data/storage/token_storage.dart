@@ -20,4 +20,15 @@ class TokenStorage {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyRefreshToken);
   }
+
+  static Future<void> clearTokens() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyAccessToken);
+    await prefs.remove(_keyRefreshToken);
+  }
+  //hasValidToken checks if the access token is not null and not empty
+  static Future<bool> hasValidToken() async {
+    final accessToken = await getAccessToken();
+    return accessToken != null && accessToken.isNotEmpty;
+  }
 }
