@@ -1,3 +1,4 @@
+import 'package:dentify_flutter/iam/data/storage/token_storage.dart';
 import 'package:flutter/material.dart';
 
 class DrawerWrapper extends StatelessWidget {
@@ -8,21 +9,17 @@ class DrawerWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FFFD),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text("Dentify App"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();  // Abre el Drawer
-            },
-            icon: const Icon(Icons.menu),
-          ),
-        ],
       ),
       drawer: Drawer(
         child: DrawerContent(
           onItemSelected: (route) {
-            Navigator.of(context).pushNamed(route); // Navega a la ruta seleccionada
+            Navigator.of(
+              context,
+            ).pushNamed(route); // Navega a la ruta seleccionada
           },
         ),
       ),
@@ -34,7 +31,8 @@ class DrawerWrapper extends StatelessWidget {
 class DrawerContent extends StatelessWidget {
   final Function(String) onItemSelected;
 
-  const DrawerContent({required this.onItemSelected, Key? key}) : super(key: key);
+  const DrawerContent({required this.onItemSelected, Key? key})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +41,18 @@ class DrawerContent extends StatelessWidget {
       children: [
         const DrawerHeader(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(Icons.account_circle, size: 40),
+              SizedBox(width: 16),
               Text('Dentify App', style: TextStyle(fontSize: 24)),
             ],
           ),
         ),
+        
         ListTile(
-          title: const Text("Home"),
-          onTap: () => onItemSelected("/home"), // Ruta a Home
+          title: const Text("Dashboard"),
+          onTap: () => onItemSelected("/home"),
         ),
         ListTile(
           title: const Text("Appointments"),
@@ -74,9 +74,18 @@ class DrawerContent extends StatelessWidget {
           title: const Text("Profile"),
           onTap: () => onItemSelected("/profile"), // Ruta a Profile
         ),
+        const Divider(),
         ListTile(
-          title: const Text("Settings"),
-          onTap: () => onItemSelected("/settings"), // Ruta a Settings
+          title: const Text("Logout"),
+          onTap: () {
+            TokenStorage.clearTokens();
+            // Aquí puedes agregar la lógica de logout
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              "/login",
+              (route) => false,
+            ); // Ruta a Login
+          
+          },
         ),
       ],
     );

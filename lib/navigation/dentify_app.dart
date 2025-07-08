@@ -1,7 +1,12 @@
-import 'package:dentify_flutter/appointments_screen.dart';
+import 'package:dentify_flutter/dashboard/presentation/view/dashboard_screen.dart';
 import 'package:dentify_flutter/iam/presentation/di/presentation_module.dart';
 import 'package:dentify_flutter/iam/presentation/view/login.dart';
 import 'package:dentify_flutter/iam/presentation/view/register.dart';
+import 'package:dentify_flutter/inventory/presentation/view/items_view.dart';
+import 'package:dentify_flutter/navigation/startup_redirect.dart';
+import 'package:dentify_flutter/patientAttention/appointments/presentation/view/appointments_view.dart';
+import 'package:dentify_flutter/payment/presentation/navigation/navigation.dart'; // Importa paymentRoutes
+import 'package:dentify_flutter/patientAttention/patients/presentation/view/patients_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'drawer_wrapper.dart'; // Importa DrawerWrapper
@@ -18,32 +23,43 @@ class DentifyApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Dentify App',
+      debugShowCheckedModeBanner: false, // Desactiva el banner de debug
       theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
-        '/login': (context) => LoginPage(
+        '/': (context) => const StartupRedirect(),
+        '/login':
+            (context) => LoginPage(
               viewModel: loginViewModel,
               onLogin: () {
                 Navigator.pushReplacementNamed(context, '/home');
               },
               toRegister: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil("/register", (route) => false);
               },
             ),
-        '/register': (context) => RegisterPage(
+        '/register':
+            (context) => RegisterPage(
               viewModel: registerViewModel,
               onRegister: () {
                 Navigator.pushReplacementNamed(context, '/home');
               },
               toLogin: () {
-                Navigator.pushNamed(context, '/login');
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil("/login", (route) => false);
               },
             ),
-        '/home': (context) => DrawerWrapper(content: HomeScreen()),
-        '/appointments': (context) => DrawerWrapper(content: AppointmentsScreen()),
+        '/appointments':
+            (context) => DrawerWrapper(content: AppointmentsView()),
         '/profile': (context) => DrawerWrapper(content: ProfileScreen()),
+        '/patients': (context) => DrawerWrapper(content: PatientsView()),
+        '/home': (context) => const DrawerWrapper(content: DashboardScreen()),
+        ...paymentRoutes(ref),
+        '/inventory': (context) => DrawerWrapper(content: ItemsView()),
       },
-      
     );
   }
 }

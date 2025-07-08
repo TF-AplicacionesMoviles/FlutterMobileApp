@@ -1,0 +1,226 @@
+import 'package:flutter/material.dart';
+import '../../domain/model/appointment_data_form.dart';
+import '../../data/remote/dto/add_invoice_request.dart';
+import '../../presentation/viewmodel/invoice_form_view_model.dart';
+
+class AddInvoiceFormView extends StatelessWidget {
+  final InvoiceFormViewModel viewModel;
+  final VoidCallback toInvoices;
+  final VoidCallback toBack;
+  final VoidCallback onInvoicesSaved;
+
+  AddInvoiceFormView({
+    required this.viewModel,
+    required this.toInvoices,
+    required this.toBack,
+    required this.onInvoicesSaved,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final amountController = TextEditingController();
+    final appointmentId = ValueNotifier<int>(0);
+    final paymentMethodId = ValueNotifier<int>(0);
+    final showSuccessDialog = ValueNotifier<bool>(false);
+
+    viewModel.loadAppointments();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add a New Invoice'),
+        backgroundColor: Color(0xFF2C3E50),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              color: Color(0xFFD1F2EB),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.description,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Add a new Invoice',
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: amountController,
+                          decoration: InputDecoration(labelText: 'Amount'),
+                          keyboardType: TextInputType.number,
+                        ),
+                        SizedBox(height: 8),
+                        AppointmentDropdown(
+                          label: 'Select Appointment',
+                          appointments: viewModel.appointments,
+                          selectedAppointmentId: appointmentId.value,
+                          onAppointmentSelected: (id) {
+                            appointmentId.value = id;
+                          },
+                        ),
+                        SizedBox(height: 8),
+                        ValueListenableBuilder<int>(
+                          valueListenable: paymentMethodId,
+                          builder: (context, value, child) {
+                            return Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    paymentMethodId.value = 1;
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                      value == 1 ? Colors.teal : Colors.grey,
+                                    ),
+                                  ),
+                                  child: Text('Credit Card'),
+                                ),
+                                SizedBox(width: 4),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    paymentMethodId.value = 2;
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                      value == 2 ? Colors.teal : Colors.grey,
+                                    ),
+                                  ),
+                                  child: Text('Cash'),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: toBack,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Go back to invoice general view',
+                        style: TextStyle(
+                          color: Color(0xFF2C3E50),
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final invoice = AddInvoiceRequest(
+                  amount: int.parse(amountController.text),
+                  appointmentId: appointmentId.value,
+                  paymentMethodId: paymentMethodId.value,
+                );
+
+                viewModel.addInvoice(invoice);
+                showSuccessDialog.value = true;
+                onInvoicesSaved();
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Color(0xFF2C3E50)),
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                )),
+              ),
+              child: Text(
+                'Save',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+      // Success Dialog
+      bottomSheet: ValueListenableBuilder<bool>(
+        valueListenable: showSuccessDialog,
+        builder: (context, showDialog, child) {
+          if (showDialog) {
+            return AlertDialog(
+              title: Text("Invoice registered successfully!"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    showSuccessDialog.value = false;
+                    onInvoicesSaved();
+                    Navigator.pop(context); // Close the dialog
+                    
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          }
+          return SizedBox.shrink();
+        },
+      ),
+    );
+  }
+}
+
+class AppointmentDropdown extends StatelessWidget {
+  final String label;
+  final List<AppointmentDataForm> appointments;
+  final int selectedAppointmentId;
+  final Function(int) onAppointmentSelected;
+
+  AppointmentDropdown({
+    required this.label,
+    required this.appointments,
+    required this.selectedAppointmentId,
+    required this.onAppointmentSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+        SizedBox(height: 8),
+        DropdownButtonFormField<int>(
+          value: selectedAppointmentId != 0 ? selectedAppointmentId : null,
+          items: appointments.map((appointment) {
+            return DropdownMenuItem<int>(
+              value: appointment.id,
+              child: Text(
+                '${appointment.patientName} - ${appointment.reason}',
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) onAppointmentSelected(value);
+          },
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: appointments.isEmpty ? 'No pending appointments' : 'Select an appointment',
+          ),
+        ),
+      ],
+    );
+  }
+}
