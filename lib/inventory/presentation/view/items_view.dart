@@ -14,6 +14,7 @@ class ItemsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5FFFD), // Fondo general
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFFF5FFFD),
         title: const Text(
           "Items",
@@ -91,6 +92,7 @@ class ItemsView extends ConsumerWidget {
                                                 const SnackBar(content: Text("Item updated")),
                                               );
                                             }
+                                            ref.read(itemsViewModelProvider.notifier).getAllItems();
                                           }
                                         },
                                       ),
@@ -111,6 +113,13 @@ class ItemsView extends ConsumerWidget {
                                           );
                                           if (confirmed == true) {
                                             ref.read(itemsViewModelProvider.notifier).deleteItem(item.id);
+                                        
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text("Item deleted")),
+                                              );
+                                            }
+                                            ref.read(itemsViewModelProvider.notifier).getAllItems();
                                           }
                                         },
                                       ),
@@ -155,6 +164,7 @@ class ItemsView extends ConsumerWidget {
           if (result != null && result.containsKey('new')) {
             final newItem = result['new'] as ItemRequest;
             await ref.read(itemsViewModelProvider.notifier).addItem(newItem);
+            ref.read(itemsViewModelProvider.notifier).getAllItems();
           }
         },
         backgroundColor: const Color(0xFF2C3E50),
