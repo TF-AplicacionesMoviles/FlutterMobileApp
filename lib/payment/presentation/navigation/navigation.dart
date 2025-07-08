@@ -1,3 +1,4 @@
+import 'package:dentify_flutter/navigation/drawer_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../presentation/view/invoice_view.dart';
@@ -10,19 +11,21 @@ Map<String, WidgetBuilder> paymentRoutes(WidgetRef ref) {
   final invoiceFormViewModel = PresentationModule.getInvoiceFormViewModel();
 
   return {
-    '/payments': (context) => InvoiceView(
-      viewModel: invoicesViewModel,
-      toAddInvoiceForm: () {
-        Navigator.pushNamed(context, '/add_invoice_form');
-      },
+    '/payments': (context) => DrawerWrapper(
+      content: InvoiceView(
+        viewModel: invoicesViewModel,
+        toAddInvoiceForm: () {
+          Navigator.pushNamed(context, '/add_invoice_form');
+        },
+      ),
     ),
     '/add_invoice_form': (context) => AddInvoiceFormView(
       viewModel: invoiceFormViewModel,
       toInvoices: () {
-        Navigator.pushReplacementNamed(context, '/payments');  // Reemplaza la ruta
+        Navigator.pop(context); // Ya no necesitas pushReplacement porque ahora el Drawer es persistente
       },
       toBack: () {
-        Navigator.pop(context);  // Regresa a la pantalla anterior
+        Navigator.pop(context);
       },
       onInvoicesSaved: () {
         invoicesViewModel.getAllInvoices();
