@@ -52,15 +52,13 @@ class DentifyApp extends ConsumerWidget {
                 ).pushNamedAndRemoveUntil("/login", (route) => false);
               },
             ),
-        '/home': (context) => DrawerWrapper(content: HomeScreen()),
         '/appointments':
             (context) => DrawerWrapper(content: AppointmentsView()),
         '/profile': (context) => DrawerWrapper(content: ProfileScreen()),
         '/patients': (context) => DrawerWrapper(content: PatientsView()),
-        '/dashboard': (context) => const DrawerWrapper(content: DashboardScreen()),
+        '/home': (context) => const DrawerWrapper(content: DashboardScreen()),
         ...paymentRoutes(ref),
         '/inventory': (context) => DrawerWrapper(content: ItemsView()),
-        '/patients': (context) => DrawerWrapper(content: PatientsView()),
       },
     );
   }

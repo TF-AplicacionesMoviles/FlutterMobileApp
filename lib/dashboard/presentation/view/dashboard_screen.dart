@@ -11,7 +11,6 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(dashboardViewModelProvider.notifier);
     final state = ref.watch(dashboardViewModelProvider);
 
     ref.listen<AsyncValue>(dashboardViewModelProvider, (_, next) {
@@ -19,7 +18,7 @@ class DashboardScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Resumen de datos')),
+      appBar: AppBar(title: const Text('Resumen de datos'), automaticallyImplyLeading: false),
       body: state.when(
         loading: () => const ShimmerLoading(),
         data: (data) => DashboardContent(data: data),
