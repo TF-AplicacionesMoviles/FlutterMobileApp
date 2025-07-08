@@ -17,11 +17,12 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
   final Ref ref;
 
   PatientViewModel(
-    this.getAllPatientsUseCase, 
+    this.getAllPatientsUseCase,
     this.addPatientUseCase,
     this.deletePatientUseCase,
     this.updatePatientUseCase,
-    this.ref) : super([]) {
+    this.ref,
+  ) : super([]) {
     getAllPatients();
   }
 
@@ -32,10 +33,9 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
       state = patients;
     } catch (e) {
       errorMessage = e.toString();
-      state = []; 
+      state = [];
       print('Error fetching patients: $errorMessage');
-    }
-    finally {
+    } finally {
       ref.read(isLoadingProvider.notifier).state = false;
     }
   }
@@ -64,6 +64,20 @@ class PatientViewModel extends StateNotifier<List<Patient>> {
       await getAllPatients();
     } catch (e) {
       errorMessage = e.toString();
+    }
+  }
+
+  Future<bool> deletePatientAndRefresh(int id) async {
+    try {
+      ref.read(isLoadingProvider.notifier).state = true;
+      await deletePatientUseCase(id);
+      await getAllPatients();
+      return true;
+    } catch (e) {
+      errorMessage = e.toString();
+      return false;
+    } finally {
+      ref.read(isLoadingProvider.notifier).state = false;
     }
   }
 }
