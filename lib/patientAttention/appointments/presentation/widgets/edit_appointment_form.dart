@@ -2,6 +2,13 @@ import 'package:dentify_flutter/patientAttention/appointments/data/remote/dto/up
 import 'package:dentify_flutter/patientAttention/appointments/domain/model/appointment.dart';
 import 'package:flutter/material.dart';
 
+String formatDurationFromMinutes(String minutesString) {
+  final totalMinutes = int.tryParse(minutesString) ?? 0;
+  final hours = totalMinutes ~/ 60;
+  final minutes = totalMinutes % 60;
+  return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+}
+
 class EditAppointmentForm extends StatefulWidget {
   final Appointment appointment;
 
@@ -22,7 +29,13 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
   void initState() {
     super.initState();
     reason = widget.appointment.reason;
-    duration = widget.appointment.duration.split(":").sublist(0,2).join(":");
+    // Convertir HH:mm:ss a minutos totales
+    final durationParts = widget.appointment.duration.split(":");
+    final hours = int.tryParse(durationParts[0]) ?? 0;
+    final minutes = int.tryParse(durationParts[1]) ?? 0;
+    final totalMinutes = (hours * 60 + minutes).toString();
+
+    duration = totalMinutes;
     appointmentDate = widget.appointment.appointmentDate;
   }
 
@@ -68,25 +81,19 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
               validator: (v) => v == null || v.isEmpty ? "required" : null,
             ),
             TextFormField(
-              initialValue: duration
-                  .split(":")
-                  .sublist(0, 2)
-                  .join(":"), // inicializar sin segundos
-              decoration: const InputDecoration(labelText: "Duration (hh:mm)"),
-              onChanged: (value) {
-                // Si el usuario pone hh:mm:ss, se fuerza a cortar
-                if (value.contains(":")) {
-                  final parts = value.split(":");
-                  if (parts.length >= 2) {
-                    duration = "${parts[0]}:${parts[1]}";
-                  } else {
-                    duration = value;
-                  }
-                } else {
-                  duration = value;
+              initialValue: duration,
+              decoration: const InputDecoration(
+                labelText: "Duration (minutes)",
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (value) => duration = value,
+              validator: (v) {
+                final minutes = int.tryParse(v ?? '');
+                if (minutes == null || minutes <= 0) {
+                  return "Enter valid minutes";
                 }
+                return null;
               },
-              validator: (v) => v == null || v.isEmpty ? "required" : null,
             ),
           ],
         ),
@@ -102,7 +109,9 @@ class _EditAppointmentFormState extends State<EditAppointmentForm> {
               final req = UpdateAppointmentRequest(
                 appointmentDate: appointmentDate,
                 reason: reason,
-                duration: duration,
+                duration: formatDurationFromMinutes(
+                  duration,
+                ), // convierte a HH:mm
               );
               Navigator.pop<Map<String, dynamic>>(context, {
                 'id': widget.appointment.id,

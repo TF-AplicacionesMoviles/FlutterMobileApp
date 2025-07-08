@@ -1,3 +1,4 @@
+import 'package:dentify_flutter/iam/data/storage/token_storage.dart';
 import 'package:flutter/material.dart';
 
 class DrawerWrapper extends StatelessWidget {
@@ -12,12 +13,13 @@ class DrawerWrapper extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text("Dentify App"),
-      
       ),
       drawer: Drawer(
         child: DrawerContent(
           onItemSelected: (route) {
-            Navigator.of(context).pushNamed(route); // Navega a la ruta seleccionada
+            Navigator.of(
+              context,
+            ).pushNamed(route); // Navega a la ruta seleccionada
           },
         ),
       ),
@@ -29,7 +31,8 @@ class DrawerWrapper extends StatelessWidget {
 class DrawerContent extends StatelessWidget {
   final Function(String) onItemSelected;
 
-  const DrawerContent({required this.onItemSelected, Key? key}) : super(key: key);
+  const DrawerContent({required this.onItemSelected, Key? key})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +73,18 @@ class DrawerContent extends StatelessWidget {
           title: const Text("Profile"),
           onTap: () => onItemSelected("/profile"), // Ruta a Profile
         ),
+        const Divider(),
         ListTile(
-          title: const Text("Settings"),
-          onTap: () => onItemSelected("/settings"), // Ruta a Settings
+          title: const Text("Logout"),
+          onTap: () {
+            TokenStorage.clearTokens();
+            // Aquí puedes agregar la lógica de logout
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              "/login",
+              (route) => false,
+            ); // Ruta a Login
+          
+          },
         ),
       ],
     );
