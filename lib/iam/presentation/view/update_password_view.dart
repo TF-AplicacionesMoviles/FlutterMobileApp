@@ -10,7 +10,6 @@ class UpdatePasswordView extends ConsumerWidget {
 
   const UpdatePasswordView({super.key, required this.viewModel});
 
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.read(profileViewModelProvider.notifier);
@@ -21,17 +20,39 @@ class UpdatePasswordView extends ConsumerWidget {
     final confirmPass = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Change Password')),
+      backgroundColor: const Color(0xFFF5FFFD),
+      appBar: AppBar(
+        title: const Text('Change Password', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF2C3E50),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+        padding: const EdgeInsets.all(24),
+        child: ListView(
           children: [
-            TextField(controller: currentPass, obscureText: true, decoration: const InputDecoration(labelText: 'Current Password')),
-            TextField(controller: newPass, obscureText: true, decoration: const InputDecoration(labelText: 'New Password')),
-            TextField(controller: confirmPass, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm Password')),
+            const Text(
+              'Update Your Password',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2C3E50),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildPasswordInput("Current Password", currentPass),
+            const SizedBox(height: 16),
+            _buildPasswordInput("New Password", newPass),
+            const SizedBox(height: 16),
+            _buildPasswordInput("Confirm Password", confirmPass),
+            const SizedBox(height: 24),
             if (state.errorMessage != null)
-              Text(state.errorMessage!, style: const TextStyle(color: Colors.red)),
-            ElevatedButton(
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  state.errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ElevatedButton.icon(
               onPressed: () async {
                 if (newPass.text != confirmPass.text) {
                   viewModel.setError("Passwords do not match.");
@@ -42,13 +63,40 @@ class UpdatePasswordView extends ConsumerWidget {
                   UpdatePasswordRequest(oldPassword: currentPass.text, newPassword: newPass.text),
                 );
 
-                if (ref.read(profileViewModelProvider).errorMessage == null) {
+                if (ref.read(profileViewModelProvider).errorMessage == null && context.mounted) {
                   Navigator.pop(context);
                 }
               },
-              child: const Text("Update Password"),
+              icon: const Icon(Icons.lock_reset),
+              label: const Text("Update Password"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2C3E50),
+                foregroundColor: Colors.white,
+                minimumSize: const Size.fromHeight(48),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordInput(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFF2C3E50)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFF2C3E50), width: 1.5),
         ),
       ),
     );
