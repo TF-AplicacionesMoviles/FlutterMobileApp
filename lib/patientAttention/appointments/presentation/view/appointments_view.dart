@@ -1,3 +1,4 @@
+import 'package:dentify_flutter/main.dart';
 import 'package:dentify_flutter/patientAttention/appointments/data/remote/dto/add_appointment_request.dart';
 import 'package:dentify_flutter/patientAttention/appointments/data/remote/dto/update_appointment_request.dart';
 import 'package:dentify_flutter/patientAttention/appointments/presentation/di/presentation_module.dart';
@@ -6,7 +7,6 @@ import 'package:dentify_flutter/patientAttention/appointments/presentation/widge
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
 
 String formatDateTime(String isoDateTime) {
   try {
@@ -30,28 +30,78 @@ String totalMinutes(String duration) {
   }
 }
 
-
-class AppointmentsView extends ConsumerWidget {
+class AppointmentsView extends ConsumerStatefulWidget {
   const AppointmentsView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppointmentsView> createState() => _AppointmentsViewState();
+}
+
+class _AppointmentsViewState extends ConsumerState<AppointmentsView>
+    with RouteAware {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(appointmentsViewModelProvider.notifier).getAllAppointments();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  // Este método se llama cuando vuelves a esta vista desde otra (por ejemplo, después de editar)
+  @override
+  void didPopNext() {
+    // Esto vuelve a traer la lista actualizada
+    ref.read(appointmentsViewModelProvider.notifier).getAllAppointments();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final appointments = ref.watch(appointmentsViewModelProvider);
+    final isLoading =
+        appointments.isEmpty &&
+        ref.read(appointmentsViewModelProvider.notifier).errorMessage == null;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5FFFD),
       appBar: AppBar(
-        title: const Text("Appointments"),
+        backgroundColor: const Color(0xFFF5FFFD),
         automaticallyImplyLeading: false,
+        elevation: 0,
+        title: const Text(
+          "Appointments",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2C3E50),
+          ),
+        ),
       ),
       body:
-          appointments.isEmpty
+          isLoading
               ? const Center(child: CircularProgressIndicator())
+              : appointments.isEmpty
+              ? const Center(
+                child: Text(
+                  "No appointments found",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              )
               : ListView.builder(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 itemCount: appointments.length,
                 itemBuilder: (context, index) {
                   final appointment = appointments[index];
                   return Card(
+                    color: Colors.white,
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -141,6 +191,22 @@ class AppointmentsView extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                    color: Color(0xFF2C3E50),
+                                  ),
+                                  foregroundColor: const Color(0xFF2C3E50),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                                 onPressed: () async {
                                   final result =
                                       await showDialog<Map<String, dynamic>>(
@@ -183,59 +249,63 @@ class AppointmentsView extends ConsumerWidget {
                               ),
                               const SizedBox(width: 8),
                               OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                    color: Color(0xFF2C3E50),
+                                  ),
+                                  foregroundColor: const Color(0xFF2C3E50),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                                 onPressed: () async {
                                   final confirm = await showDialog<bool>(
                                     context: context,
-                                    builder:
-                                        (ctx) => AlertDialog(
-                                          title: const Text("Confirm Delete"),
-                                          content: const Text(
-                                            "Are you sure you want to delete this appointment?",
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Delete Appointment'),
+                                      content: const Text(
+                                        'Are you sure you want to delete this appointment?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            context,
+                                            false,
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed:
-                                                  () =>
-                                                      Navigator.pop(ctx, false),
-                                              child: const Text("Cancel"),
-                                            ),
-                                            ElevatedButton(
-                                              onPressed:
-                                                  () =>
-                                                      Navigator.pop(ctx, true),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                              ),
-                                              child: const Text("Delete"),
-                                            ),
-                                          ],
+                                          child: const Text('Cancel'),
                                         ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            context,
+                                            true,
+                                          ),
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    ),
                                   );
 
                                   if (confirm == true) {
-                                    print('Delete pressed');
-                                    print(
-                                      'Deleting appointment with ID: ${appointment.id}',
-                                    );
                                     await ref
                                         .read(
                                           appointmentsViewModelProvider
                                               .notifier,
                                         )
                                         .deleteAppointment(appointment.id);
-                                    await ref
-                                        .read(
-                                          appointmentsViewModelProvider
-                                              .notifier,
-                                        )
-                                        .getAllAppointments();
 
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text("Appointment deleted"),
+                                          content:
+                                              Text("Appointment deleted"),
                                         ),
                                       );
                                     }
@@ -251,29 +321,39 @@ class AppointmentsView extends ConsumerWidget {
                   );
                 },
               ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final newAppointment = await showDialog<AddAppointmentRequest>(
-            context: context,
-            builder: (context) => const AddAppointmentForm(),
-          );
-          if (newAppointment != null) {
-            await ref
-                .read(appointmentsViewModelProvider.notifier)
-                .addAppointment(newAppointment);
-          }
-        },
-        backgroundColor: const Color.fromARGB(255, 117, 168, 219),
-        foregroundColor: const Color.fromARGB(255, 0, 0, 0),
-        icon: const Icon(Icons.add),
-        //label: const Text('New Appointment (+)'),
-      
-        label: const Text(
-          'New Appointment',
-          style: TextStyle(fontWeight: FontWeight.bold),
-          
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () async {
+              final newAppointment = await showDialog<AddAppointmentRequest>(
+                context: context,
+                builder: (context) => const AddAppointmentForm(),
+              );
+              if (newAppointment != null) {
+                await ref
+                    .read(appointmentsViewModelProvider.notifier)
+                    .addAppointment(newAppointment);
+              }
+            },
+            icon: const Icon(Icons.add),
+            label: const Text(
+              'New Appointment',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2C3E50),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
@@ -290,7 +370,13 @@ class InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2C3E50),
+            ),
+          ),
           const SizedBox(width: 6),
           Text(value),
         ],

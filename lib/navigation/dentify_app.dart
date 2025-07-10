@@ -10,7 +10,6 @@ import 'package:dentify_flutter/patientAttention/patients/presentation/view/pati
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'drawer_wrapper.dart'; // Importa DrawerWrapper
-import '../home_screen.dart';
 import '../profile_screen.dart';
 
 class DentifyApp extends ConsumerWidget {
@@ -20,9 +19,12 @@ class DentifyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loginViewModel = ref.read(loginViewModelProvider);
     final registerViewModel = ref.read(registerViewModelProvider);
+    final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 
     return MaterialApp(
       title: 'Dentify App',
+      navigatorObservers: [routeObserver],
       debugShowCheckedModeBanner: false, // Desactiva el banner de debug
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
