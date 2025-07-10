@@ -6,16 +6,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(dashboardViewModelProvider);
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
 
-    ref.listen<AsyncValue>(dashboardViewModelProvider, (_, next) {
-      // Nada adicional
-    });
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Esto forzará recarga cada vez que se muestra la pantalla
+    ref.read(dashboardViewModelProvider.notifier).loadDashboardData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(dashboardViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Resumen de datos'), automaticallyImplyLeading: false),
@@ -23,18 +31,18 @@ class DashboardScreen extends ConsumerWidget {
         loading: () => const ShimmerLoading(),
         data: (data) => DashboardContent(data: data),
         error: (e, st) => Center(
-  child: Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Error al cargar el dashboard.', style: TextStyle(fontSize: 16)),
-        const SizedBox(height: 12),
-        Text(e.toString(), style: const TextStyle(color: Colors.red)),
-      ],
-    ),
-  ),
-),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Error al cargar el dashboard.', style: TextStyle(fontSize: 16)),
+                const SizedBox(height: 12),
+                Text(e.toString(), style: const TextStyle(color: Colors.red)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -10,6 +10,8 @@ class ItemsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(itemsViewModelProvider);
+    final itemsNotifier = ref.read(itemsViewModelProvider.notifier);
+    final isLoading = items.isEmpty && itemsNotifier.errorMessage == null;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5FFFD), // Fondo general
@@ -24,8 +26,18 @@ class ItemsView extends ConsumerWidget {
           ),
         ),
       ),
-      body: items.isEmpty
+      body: isLoading
           ? const Center(child: CircularProgressIndicator())
+          : items.isEmpty
+          ? const Center(
+              child: Text(
+                "No items found",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey,
+                ),
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(24),
               itemCount: items.length,
